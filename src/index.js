@@ -6,11 +6,13 @@ class AccountKit extends React.Component {
     super(props);
     this.signIn = this.signIn.bind(this);
     this.state = {
-      disabled: false
+      disabled: false,
+      isMounted: false,
     };
   }
 
   componentDidMount() {
+    
     if (!window.AccountKit) {
       (cb => {
         const tag = document.createElement("script");
@@ -23,7 +25,11 @@ class AccountKit extends React.Component {
         tag.onload = cb;
         document.head.appendChild(tag);
       })(() => {
-        window.AccountKit_OnInteractive = this.onLoad.bind(this);
+        this.setState({
+          isMounted: true,
+        }, () => {
+          window.AccountKit_OnInteractive = this.onLoad.bind(this);
+        })
       });
     }
   }
@@ -39,9 +45,17 @@ class AccountKit extends React.Component {
       redirect,
       fbAppEventsEnabled: false
     });
+    if (this.state.isMounted) {
+      this.setState({
+        disabled: false
+      });
+    }
+  }
+
+  componentWillUnmount() {
     this.setState({
-      disabled: false
-    });
+      isMounted: false,
+    })
   }
 
   signIn() {
