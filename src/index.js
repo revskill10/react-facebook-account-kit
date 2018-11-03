@@ -13,7 +13,7 @@ class AccountKit extends React.Component {
 
   componentDidMount() {
     
-    if (!window.AccountKit) {
+    if (!window.AccountKit && this.state.isMounted) {
       (cb => {
         const tag = document.createElement("script");
         tag.setAttribute(
@@ -25,11 +25,7 @@ class AccountKit extends React.Component {
         tag.onload = cb;
         document.head.appendChild(tag);
       })(() => {
-        this.setState({
-          isMounted: true,
-        }, () => {
-          window.AccountKit_OnInteractive = this.onLoad.bind(this);
-        })
+        window.AccountKit_OnInteractive = this.onLoad.bind(this);
       });
     }
   }
